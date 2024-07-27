@@ -1,10 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
-const rules = require('./routes/rules');
+const rules = require('./routes/rules')
 
-const uri = 'mongodb+srv://ast:123@cluster0.286axwx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.mongo_url;
 const app = express();
 const port = 3000;
 
@@ -31,3 +32,4 @@ app.use('/rules', rules);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+console.log('MongoDB URI:', uri);

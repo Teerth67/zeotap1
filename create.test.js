@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const { parseRule, evaluateRule, combineRules, convertDocumentToNode, saveNode } = require('./createast');
-
+require('dotenv').config()
 // Define the URI for your MongoDB instance (use a test database)
-const MONGO_URI = 'mongodb+srv://ast:123@cluster0.286axwx.mongodb.net/test?retryWrites=true&w=majority';
+const MONGO_URI = process.env.mongo_url;
 
 beforeAll(async () => {
     await mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
