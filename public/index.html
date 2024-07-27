@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Rule Management</h1>
+
+    <!-- Create Rule Form -->
+    <h2>Create Rule</h2>
+    <form id="createRuleForm">
+        <label for="ruleName">Rule Name:</label>
+        <input type="text" id="ruleName" name="ruleName" required>
+        <br><br>
+        <label for="ruleString">Rule String:</label>
+        <textarea id="ruleString" name="ruleString" rows="4" cols="50" required></textarea>
+        <br><br>
+        <button type="submit">Create Rule</button>
+    </form>
+
+    <hr>
+
+    <!-- Evaluate Rule Form -->
+    <h2>Evaluate Rule</h2>
+    <form id="evaluateRuleForm">
+        <label for="ruleId">Rule ID:</label>
+        <input type="text" id="ruleId" name="ruleId" required>
+        <br><br>
+        <label for="data">Data (JSON):</label>
+        <textarea id="data" name="data" rows="4" cols="50" required></textarea>
+        <br><br>
+        <button type="submit">Evaluate Rule</button>
+    </form>
+
+    <hr>
+
+    <!-- Combine Rules Form -->
+    <h2>Combine Rules</h2>
+    <form id="combineRulesForm">
+        <label for="rules">Rules (JSON array):</label>
+        <textarea id="rules" name="rules" rows="4" cols="50" required></textarea>
+        <br><br>
+        <button type="submit">Combine Rules</button>
+    </form>
+
+    <script>
+        // Create Rule Form Handler
+     // Create Rule Form Handler
+document.getElementById('createRuleForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const ruleName = document.getElementById('ruleName').value;
+    const ruleString = document.getElementById('ruleString').value;
+
+    try {
+        const response = await fetch('/rules/create_rule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ruleName, ruleString }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Rule created successfully! Rule ID: ${result.rule._id}`);
+        } else {
+            alert(`Error creating rule: ${result.message}`);
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+});
+
+// Evaluate Rule Form Handler
+document.getElementById('evaluateRuleForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const ruleId = document.getElementById('ruleId').value;
+    let data;
+    try {
+        data = JSON.parse(document.getElementById('data').value);
+    } catch (e) {
+        alert("Error parsing JSON data. Please ensure it's valid.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/rules/evaluate_rule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ruleId, data }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Evaluation result: ${result.result}`);
+        } else {
+            alert(`Error evaluating rule: ${result.message}`);
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+});
+
+// Combine Rules Form Handler
+document.getElementById('combineRulesForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    let rules;
+    try {
+        rules = JSON.parse(document.getElementById('rules').value);
+    } catch (e) {
+        alert("Error parsing JSON rules. Please ensure it's valid.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/rules/combine_rules', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rules }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Combined rule created successfully! Combined Rule ID: ${result.rootId}`);
+        } else {
+            alert(`Error combining rules: ${result.message}`);
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+});
+
+    </script>
+</body>
+</html>
